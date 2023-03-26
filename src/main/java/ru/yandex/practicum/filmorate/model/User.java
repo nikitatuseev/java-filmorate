@@ -16,6 +16,7 @@ public class User {
     private String email;
     @NotBlank(groups = {CreateGroup.class, UpdateGroup.class})
     private String login;
+
     private String name;
     @NotNull(groups = {CreateGroup.class, UpdateGroup.class})
     private LocalDate birthday;

@@ -29,7 +29,7 @@ public class UserController {
             throw new UserException("дата рождения не может быть в будущем.");
         }
         if (users.values().stream().noneMatch(u -> u.getLogin().equals(user.getLogin()))) {
-            if (user.getName().isBlank()) {
+            if (user.getName() == null || user.getName().isBlank()) {
                 user.setName(user.getLogin());
             }
             user.setId(idGenerator++);
@@ -54,7 +54,7 @@ public class UserController {
             throw new UserException("дата рождения не может быть в будущем.");
         }
         if (users.containsKey(user.getId())) {
-            if (user.getName().isBlank()) {
+            if (user.getName() == null || user.getName().isBlank()) {
                 user.setName(user.getLogin());
             }
             users.put(user.getId(), user);
