@@ -47,7 +47,7 @@ public class FilmController {
             return film;
         } else {
             log.error("Фильм с id = {} не найден", film.getId());
-            throw new RuntimeException("Фильм с таким id не существует");
+            throw new FilmException("Фильм с таким id не существует");
         }
     }
 
