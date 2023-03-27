@@ -41,6 +41,7 @@ public class UserController {
         return new ArrayList<>(users.values());
     }
 
+    //без else не проходит проверку гит в тестах postman
     @PutMapping
     public User updateUser(@RequestBody @Validated(UpdateGroup.class) User user) {
         checkDate(user);
@@ -51,8 +52,10 @@ public class UserController {
             users.put(user.getId(), user);
             log.info("пользователь с логином {} обновлен", user.getLogin());
             return user;
+        } else {
+            log.error("Пользователь с id = {} не найден", user.getId());
+            throw new UserException("Пользователь с таким id не существует");
         }
-        return user;
     }
 
     private void checkDate(User user) {

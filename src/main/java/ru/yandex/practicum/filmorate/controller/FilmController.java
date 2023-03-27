@@ -38,13 +38,17 @@ public class FilmController {
         return film;
     }
 
+    //без else не проходит проверку гит в тестах postman
     @PutMapping
     public Film updateFilm(@RequestBody @Validated(UpdateGroup.class) Film film) {
         checkDate(film);
         if (films.containsKey(film.getId())) {
             films.put(film.getId(), film);
+            return film;
+        } else {
+            log.error("Фильм с id = {} не найден", film.getId());
+            throw new RuntimeException("Фильм с таким id не существует");
         }
-        return film;
     }
 
     private void checkDate(Film film) {
