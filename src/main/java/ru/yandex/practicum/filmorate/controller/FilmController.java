@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.FilmException;
-import ru.yandex.practicum.filmorate.exception.UserException;
 import ru.yandex.practicum.filmorate.model.CreateGroup;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.UpdateGroup;
@@ -20,7 +19,7 @@ import java.util.Map;
 @RequestMapping("/films")
 public class FilmController {
     private int idGenerator = 1;
-    private final LocalDate filmBirthday = LocalDate.of(1895, 12, 28);
+    private static final LocalDate FILM_BIRTHDAY = LocalDate.of(1895, 12, 28);
     private final Map<Integer, Film> films = new HashMap<>();
 
     @GetMapping()
@@ -31,32 +30,27 @@ public class FilmController {
     @PostMapping()
     public Film addFilm(@RequestBody @Validated(CreateGroup.class) Film film) {
         if (films.values().stream().noneMatch(u -> u.getDescription().equals(film.getDescription()))) {
-            if (film.getReleaseDate().isBefore(filmBirthday)) {
-                log.error("дата релиза не может быть раньше 28 декабря 1895 года.");
-                throw new FilmException("дата релиза не может быть раньше 28 декабря 1895 года.");
-            }
+            checkDate(film);
             film.setId(idGenerator++);
             films.put(film.getId(), film);
-            log.info("фильм добавлен");
-            return film;
-        } else {
-            log.error("Фильм с таким описанием уже есть");
-            throw new UserException("Такой фильм уже существует");
+            log.info("фильм {} добавлен", film);
         }
+        return film;
     }
 
     @PutMapping
     public Film updateFilm(@RequestBody @Validated(UpdateGroup.class) Film film) {
-        if (film.getReleaseDate().isBefore(filmBirthday)) {
-            log.error("дата релиза не может быть раньше 28 декабря 1895 года.");
-            throw new FilmException("дата релиза не может быть раньше 28 декабря 1895 года.");
-        }
+        checkDate(film);
         if (films.containsKey(film.getId())) {
             films.put(film.getId(), film);
-            return film;
-        } else {
-            log.error("Фильм с id = {} не найден", film.getId());
-            throw new RuntimeException("Фильм с таким id не существует");
+        }
+        return film;
+    }
+
+    private void checkDate(Film film) {
+        if (film.getReleaseDate().isBefore(FILM_BIRTHDAY)) {
+            log.error("дата релиза не может быть раньше 28 декабря 1895 года.");
+            throw new FilmException("дата релиза не может быть раньше 28 декабря 1895 года.");
         }
     }
 }

@@ -24,10 +24,7 @@ public class UserController {
 
     @PostMapping()
     public User register(@RequestBody @Validated(CreateGroup.class) User user) {
-        if (user.getBirthday().isAfter(LocalDate.now())) {
-            log.error("дата рождения не может быть в будущем.");
-            throw new UserException("дата рождения не может быть в будущем.");
-        }
+        checkDate(user);
         if (users.values().stream().noneMatch(u -> u.getLogin().equals(user.getLogin()))) {
             if (user.getName() == null || user.getName().isBlank()) {
                 user.setName(user.getLogin());
@@ -35,11 +32,8 @@ public class UserController {
             user.setId(idGenerator++);
             users.put(user.getId(), user);
             log.info("Пользователь с логином {} добавлен", user.getLogin());
-            return user;
-        } else {
-            log.error("Пользователь с логином {} уже существует", user.getLogin());
-            throw new UserException("Пользователь с таким логином уже существует");
         }
+        return user;
     }
 
     @GetMapping()
@@ -49,19 +43,22 @@ public class UserController {
 
     @PutMapping
     public User updateUser(@RequestBody @Validated(UpdateGroup.class) User user) {
-        if (user.getBirthday().isAfter(LocalDate.now())) {
-            log.error("дата рождения не может быть в будущем.");
-            throw new UserException("дата рождения не может быть в будущем.");
-        }
+        checkDate(user);
         if (users.containsKey(user.getId())) {
             if (user.getName() == null || user.getName().isBlank()) {
                 user.setName(user.getLogin());
             }
             users.put(user.getId(), user);
+            log.info("пользователь с логином {} обновлен", user.getLogin());
             return user;
-        } else {
-            log.error("Пользователь с id = {} не найден", user.getId());
-            throw new RuntimeException("Пользователь с таким id не существует");
+        }
+        return user;
+    }
+
+    private void checkDate(User user) {
+        if (user.getBirthday().isAfter(LocalDate.now())) {
+            log.error("дата рождения не может быть в будущем.");
+            throw new UserException("дата рождения не может быть в будущем.");
         }
     }
 }
