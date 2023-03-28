@@ -41,7 +41,6 @@ public class UserController {
         return new ArrayList<>(users.values());
     }
 
-    //без else не проходит проверку гит в тестах postman
     @PutMapping
     public User updateUser(@RequestBody @Validated(UpdateGroup.class) User user) {
         checkDate(user);
@@ -58,7 +57,7 @@ public class UserController {
         }
     }
 
-    private void checkDate(User user) {
+    protected void checkDate(User user) {
         if (user.getBirthday().isAfter(LocalDate.now())) {
             log.error("дата рождения не может быть в будущем.");
             throw new UserException("дата рождения не может быть в будущем.");

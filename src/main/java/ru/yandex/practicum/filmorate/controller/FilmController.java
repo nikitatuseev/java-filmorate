@@ -38,7 +38,6 @@ public class FilmController {
         return film;
     }
 
-    //без else не проходит проверку гит в тестах postman
     @PutMapping
     public Film updateFilm(@RequestBody @Validated(UpdateGroup.class) Film film) {
         checkDate(film);
@@ -51,7 +50,7 @@ public class FilmController {
         }
     }
 
-    private void checkDate(Film film) {
+    protected void checkDate(Film film) {
         if (film.getReleaseDate().isBefore(FILM_BIRTHDAY)) {
             log.error("дата релиза не может быть раньше 28 декабря 1895 года.");
             throw new FilmException("дата релиза не может быть раньше 28 декабря 1895 года.");

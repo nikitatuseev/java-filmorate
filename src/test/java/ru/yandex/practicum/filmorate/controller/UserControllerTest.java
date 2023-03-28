@@ -1,12 +1,13 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import org.junit.jupiter.api.Test;
+import ru.yandex.practicum.filmorate.exception.UserException;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.*;
-//а как сделать тесты если у меня валидация через аннотации?
+
 public class UserControllerTest {
     UserController controller = new UserController();
 
@@ -27,5 +28,17 @@ public class UserControllerTest {
                 LocalDate.of(1500, 1, 23));
         controller.updateUser(updateUser);
         assertEquals(updateUser, controller.getUsers().get(0));
+    }
+
+    @Test
+    public void wrongBirthday() {
+        User user = new User(1, "dsd@mail.ru", "login1", "", LocalDate.now().plusDays(1));
+        assertThrows(UserException.class, () -> controller.checkDate(user));
+    }
+
+    @Test
+    public void normalBirthday() {
+        User user = new User(1, "dsd@mail.ru", "login1", "", LocalDate.now().minusYears(1));
+        assertDoesNotThrow(() -> controller.checkDate(user));
     }
 }
