@@ -75,7 +75,6 @@ public class InMemoryUserStorage implements UserStorage {
     public void checkDate(User user) {
         if (user.getBirthday().isAfter(LocalDate.now())) {
             log.error("дата рождения не может быть в будущем.");
-           // throw new UserException("дата рождения не может быть в будущем.");
             throw new IncorrectParameterException("birthday");
         }
     }

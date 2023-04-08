@@ -39,28 +39,6 @@ public class UserService {
         return userStorage.update(user);
     }
 
-    /* public User addFriend(int id, int friendId) {
-         User user = userStorage.getUser(id);
-         if (user == null) {
-             log.error("Пользователя с id {} не существует", id);
-             throw new UserException("Пользователя с id " + id + " не существует");
-         }
-
-         User friend = userStorage.getUser(friendId);
-         if (friend == null) {
-             log.error("Пользователя с id {} не существует", friendId);
-             throw new UserException("Пользователя с id " + friendId + " не существует");
-         }
-
-         user.getFriends().add(friendId);
-         friend.getFriends().add(id);
-
-         log.info("Пользователь с id " + id + " добавил пользователя с id " + friendId + " в друзья");
-
-         return user;
-     }
-
-     */
     public User addFriend(int id, int friendId) {
         User user = userStorage.getUser(id);
         if (user == null) {
@@ -107,22 +85,6 @@ public class UserService {
 
         return user;
     }
-
-    /*public Set<User> getAllFriends(User user) {
-        if(!userStorage.getUsers().contains(user)){
-            log.error("Пользователя с id {} не существует ", user.getId());
-            throw new UserException("Пользователя с id" + user.getId() + "не существует ");
-        }
-        Set<User> friends = new HashSet<>();
-        Set<Integer> friendIds = user.getFriends();
-        for (Integer friendId : friendIds) {
-            User friend = getUser(friendId);
-            friends.add(friend);
-        }
-        return friends;
-    }
-
-     */
 
     public Set<User> getAllFriends(User user) {
         if (!userStorage.getUsers().contains(user)) {

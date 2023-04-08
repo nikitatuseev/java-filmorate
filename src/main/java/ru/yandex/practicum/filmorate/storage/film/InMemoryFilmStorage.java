@@ -46,9 +46,10 @@ public class InMemoryFilmStorage implements FilmStorage {
             throw new FilmException("Фильм с таким id не существует");
         }
     }
+
     @Override
-    public Film getFilm(int id){
-        if(!films.containsKey(id)){
+    public Film getFilm(int id) {
+        if (!films.containsKey(id)) {
             log.error("Фильм с id = {} не найден", id);
             throw new FilmException("Фильм с таким id не существует");
         }
@@ -58,7 +59,6 @@ public class InMemoryFilmStorage implements FilmStorage {
     protected void checkDate(Film film) {
         if (film.getReleaseDate().isBefore(FILM_BIRTHDAY)) {
             log.error("дата релиза не может быть раньше 28 декабря 1895 года.");
-            //throw new FilmException("дата релиза не может быть раньше 28 декабря 1895 года.");
             throw new IncorrectParameterException("releaseDate");
         }
     }
