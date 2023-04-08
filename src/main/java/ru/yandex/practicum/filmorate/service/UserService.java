@@ -52,8 +52,8 @@ public class UserService {
             throw new UserException("Пользователя с id " + friendId + " не существует");
         }
 
-        user.addFriend(friend);
-        friend.addFriend(user);
+        user.getFriends().add(friendId);
+        friend.getFriends().add(id);
 
         log.info("Пользователь с id " + id + " добавил пользователя с id " + friendId + " в друзья");
 

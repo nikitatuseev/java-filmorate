@@ -13,6 +13,7 @@ import ru.yandex.practicum.filmorate.storage.user.InMemoryUserStorage;
 import java.time.LocalDate;
 import java.util.*;
 
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class UserServiceTest {
@@ -41,7 +42,7 @@ class UserServiceTest {
 
         List<User> result = userService.getUsers();
 
-        Assertions.assertEquals(users, result);
+        assertEquals(users, result);
     }
 
     @Test
@@ -53,7 +54,7 @@ class UserServiceTest {
 
         User result = userService.getUser(1);
 
-        Assertions.assertEquals(user, result);
+        assertEquals(user, result);
     }
 
     @Test
@@ -65,7 +66,7 @@ class UserServiceTest {
 
         User result = userService.create(user);
 
-        Assertions.assertEquals(user, result);
+        assertEquals(user, result);
     }
 
     @Test
@@ -77,14 +78,14 @@ class UserServiceTest {
 
         User result = userService.update(user);
 
-        Assertions.assertEquals(user, result);
+        assertEquals(user, result);
     }
 
     @Test
     void testAddFriend() {
         User user1 = new User(1, "dd@mail.ru", "dc", "user1", LocalDate.of(1990, 2, 1),
                 null);
-        User user2 = new User(1, "dd@mail.ru", "d", "user2", LocalDate.of(1990, 2, 1),
+        User user2 = new User(2, "dd@mail.ru", "d", "user2", LocalDate.of(1990, 2, 1),
                 null);
 
         when(userStorage.getUser(1)).thenReturn(user1);
@@ -96,6 +97,7 @@ class UserServiceTest {
         Assertions.assertTrue(user2.getFriends().contains(1));
         Assertions.assertEquals(user1, result);
     }
+
 
     @Test
     void testDeleteFriend() {
@@ -113,14 +115,14 @@ class UserServiceTest {
 
         Assertions.assertFalse(user1.getFriends().contains(2));
         Assertions.assertFalse(user2.getFriends().contains(1));
-        Assertions.assertEquals(user1, result);
+        assertEquals(user1, result);
     }
 
     @Test
     void testGetAllFriends() {
         User user1 = new User(1, "dd@mail.ru", "dc", "user1", LocalDate.of(1990, 2, 1),
                 null);
-        User user2 = new User(1, "dd@mail.ru", "d", "user2", LocalDate.of(1990, 2, 1),
+        User user2 = new User(2, "dd@mail.ru", "d", "user2", LocalDate.of(1990, 2, 1),
                 null);
 
         when(userStorage.getUser(1)).thenReturn(user1);
@@ -137,3 +139,4 @@ class UserServiceTest {
         Assertions.assertEquals(friends, res);
     }
 }
+
