@@ -3,57 +3,55 @@ package ru.yandex.practicum.filmorate.controller;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exception.FilmException;
 import ru.yandex.practicum.filmorate.model.CreateGroup;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.UpdateGroup;
+import ru.yandex.practicum.filmorate.service.FilmService;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @RestController
 @RequestMapping("/films")
 public class FilmController {
-    private int idGenerator = 1;
-    private static final LocalDate FILM_BIRTHDAY = LocalDate.of(1895, 12, 28);
-    private final Map<Integer, Film> films = new HashMap<>();
+    private final FilmService filmService;
+
+    public FilmController(FilmService filmService) {
+        this.filmService = filmService;
+    }
 
     @GetMapping()
     public List<Film> getFilms() {
-        return new ArrayList<>(films.values());
+        return filmService.getFilms();
+    }
+
+    @GetMapping("/{id}")
+    public Film getFilm(@PathVariable int id) {
+        return filmService.getFilm(id);
+    }
+
+    @GetMapping("/popular")
+    public List<Film> getPopularFilms(@RequestParam(required = false, defaultValue = "10") Integer count) {
+        return filmService.getPopularFilms(count);
     }
 
     @PostMapping()
     public Film addFilm(@RequestBody @Validated(CreateGroup.class) Film film) {
-        if (films.values().stream().noneMatch(u -> u.getDescription().equals(film.getDescription()))) {
-            checkDate(film);
-            film.setId(idGenerator++);
-            films.put(film.getId(), film);
-            log.info("фильм {} добавлен", film);
-        }
-        return film;
+        return filmService.create(film);
     }
 
     @PutMapping
     public Film updateFilm(@RequestBody @Validated(UpdateGroup.class) Film film) {
-        checkDate(film);
-        if (films.containsKey(film.getId())) {
-            films.put(film.getId(), film);
-            return film;
-        } else {
-            log.error("Фильм с id = {} не найден", film.getId());
-            throw new FilmException("Фильм с таким id не существует");
-        }
+        return filmService.update(film);
     }
 
-    protected void checkDate(Film film) {
-        if (film.getReleaseDate().isBefore(FILM_BIRTHDAY)) {
-            log.error("дата релиза не может быть раньше 28 декабря 1895 года.");
-            throw new FilmException("дата релиза не может быть раньше 28 декабря 1895 года.");
-        }
+    @PutMapping("/{filmId}/like/{userId}")
+    public Film addLike(@PathVariable int filmId, @PathVariable int userId) {
+        return filmService.addLike(filmId, userId);
+    }
+
+    @DeleteMapping("/{filmId}/like/{userId}")
+    public Film removeLike(@PathVariable int filmId, @PathVariable int userId) {
+        return filmService.removeLike(filmId, userId);
     }
 }
