@@ -9,8 +9,7 @@ import ru.yandex.practicum.filmorate.model.UpdateGroup;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
 
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Slf4j
 @RestController
@@ -38,7 +37,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}/friends")
-    public Set<User> getListOfFriends(@PathVariable int id) {
+    public List<User> getListOfFriends(@PathVariable int id) {
         return userService.getAllFriends(userService.getUser(id));
     }
 

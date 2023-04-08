@@ -8,6 +8,7 @@ import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.user.InMemoryUserStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -52,8 +53,8 @@ public class UserService {
             throw new UserException("Пользователя с id " + friendId + " не существует");
         }
 
-        user.getFriends().add(friendId);
-        friend.getFriends().add(id);
+        user.addFriend(friend);
+        friend.addFriend(user);
 
         log.info("Пользователь с id " + id + " добавил пользователя с id " + friendId + " в друзья");
 
@@ -62,7 +63,6 @@ public class UserService {
 
         return user;
     }
-
 
     public User deleteFriend(int id, int friendId) {
         User user = userStorage.getUser(id);
@@ -86,12 +86,12 @@ public class UserService {
         return user;
     }
 
-    public Set<User> getAllFriends(User user) {
+    public List<User> getAllFriends(User user) {
         if (!userStorage.getUsers().contains(user)) {
             log.error("Пользователя с id {} не существует ", user.getId());
             throw new UserException("Пользователя с id" + user.getId() + "не существует ");
         }
-        Set<User> friends = new HashSet<>();
+        List<User> friends = new ArrayList<>();
         Set<Integer> friendIds = user.getFriends();
         for (Integer friendId : friendIds) {
             User friend = userStorage.getUser(friendId);
