@@ -7,10 +7,7 @@ import ru.yandex.practicum.filmorate.exception.IncorrectParameterException;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Slf4j
 @Component
@@ -29,6 +26,7 @@ public class InMemoryFilmStorage implements FilmStorage {
         if (films.values().stream().noneMatch(u -> u.getDescription().equals(film.getDescription()))) {
             checkDate(film);
             film.setId(idGenerator++);
+            film.setLikes(new HashSet<>());
             films.put(film.getId(), film);
             log.info("фильм {} добавлен", film);
         }
@@ -39,6 +37,10 @@ public class InMemoryFilmStorage implements FilmStorage {
     public Film updateFilm(Film film) {
         checkDate(film);
         if (films.containsKey(film.getId())) {
+            //добавил эту проверку потому что при обновлении поле становилось null
+            if (film.getLikes() == null) {
+                film.setLikes(new HashSet<>());
+            }
             films.put(film.getId(), film);
             return film;
         } else {

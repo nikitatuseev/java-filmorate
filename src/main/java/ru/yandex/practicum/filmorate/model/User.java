@@ -5,7 +5,6 @@ import lombok.Data;
 
 import javax.validation.constraints.*;
 import java.time.LocalDate;
-import java.util.HashSet;
 import java.util.Set;
 
 @Data
@@ -23,13 +22,6 @@ public class User {
     @NotNull(groups = {CreateGroup.class, UpdateGroup.class})
     private LocalDate birthday;
     private Set<Integer> friends;
-
-    public Set<Integer> getFriends() {
-        if (friends == null) {
-            friends = new HashSet<>();
-        }
-        return friends;
-    }
 
     public boolean addFriend(User user) {
         return friends.add(user.getId());

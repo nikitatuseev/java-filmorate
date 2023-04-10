@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 public class UserService {
-    UserStorage userStorage;
+    private final UserStorage userStorage;
 
     @Autowired
     public UserService(InMemoryUserStorage userStorage) {
@@ -41,25 +41,12 @@ public class UserService {
 
     public User addFriend(int id, int friendId) {
         User user = userStorage.getUser(id);
-        if (user == null) {
-            log.error("Пользователя с id {} не существует", id);
-            throw new UserException("Пользователя с id " + id + " не существует");
-        }
-
         User friend = userStorage.getUser(friendId);
-        if (friend == null) {
-            log.error("Пользователя с id {} не существует", friendId);
-            throw new UserException("Пользователя с id " + friendId + " не существует");
-        }
 
         user.getFriends().add(friendId);
         friend.getFriends().add(id);
 
         log.info("Пользователь с id " + id + " добавил пользователя с id " + friendId + " в друзья");
-
-        userStorage.update(user);
-        userStorage.update(friend);
-
         return user;
     }
 
@@ -67,18 +54,8 @@ public class UserService {
         User user = userStorage.getUser(id);
         User friend = userStorage.getUser(friendId);
 
-        if (user == null) {
-            throw new UserException("Пользователя с id " + id + " не существует");
-        }
-        if (friend == null) {
-            throw new UserException("Пользователя с id " + friendId + " не существует");
-        }
-
         user.getFriends().remove(friendId);
         friend.getFriends().remove(id);
-
-        update(user);
-        update(friend);
 
         log.info("Пользователь с id {} удалил пользователя с id {} из друзей", id, friendId);
 
@@ -99,20 +76,14 @@ public class UserService {
         return friends;
     }
 
-    public Set<User> getCommonFriends(int id, int otherId) {
-        if (userStorage.getUser(id) == null) {
-            log.error("Пользователя с id {} не существует ", id);
-            throw new UserException("Пользователя с id" + id + "не существует ");
-        }
-        if (userStorage.getUser(otherId) == null) {
-            log.error("Пользователя с id {} не существует ", otherId);
-            throw new UserException("Пользователя с id" + otherId + "не существует ");
-        }
+    public List<User> getCommonFriends(int id, int otherId) {
+        userStorage.getUser(id);
+        userStorage.getUser(otherId);
         User user = userStorage.getUser(id);
         User friend = userStorage.getUser(otherId);
         return user.getFriends().stream()
                 .filter(friend.getFriends()::contains)
                 .map(userStorage::getUser)
-                .collect(Collectors.toSet());
+                .collect(Collectors.toList());
     }
 }
