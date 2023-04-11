@@ -13,9 +13,7 @@ import ru.yandex.practicum.filmorate.storage.user.InMemoryUserStorage;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -30,8 +28,6 @@ class FilmServiceTest {
 
     private FilmService filmService;
 
-    private final Set<Integer> emptySet = new HashSet<>();
-
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.initMocks(this);
@@ -41,8 +37,8 @@ class FilmServiceTest {
     @Test
     void testGetFilms() {
         List<Film> films = new ArrayList<>();
-        films.add(new Film(1, "film", "newFilm", LocalDate.now(), 90, emptySet));
-        films.add(new Film(2, "film", "newFilm", LocalDate.now(), 90, emptySet));
+        films.add(new Film(1, "film", "newFilm", LocalDate.now(), 90));
+        films.add(new Film(2, "film", "newFilm", LocalDate.now(), 90));
         when(filmStorage.getFilms()).thenReturn(films);
 
         List<Film> result = filmService.getFilms();
@@ -52,7 +48,7 @@ class FilmServiceTest {
 
     @Test
     void testCreate() {
-        Film film = new Film(1, "film", "newFilm", LocalDate.now(), 90, emptySet);
+        Film film = new Film(1, "film", "newFilm", LocalDate.now(), 90);
         when(filmStorage.addFilm(film)).thenReturn(film);
 
         Film result = filmService.create(film);
@@ -62,7 +58,7 @@ class FilmServiceTest {
 
     @Test
     void testUpdate() {
-        Film film = new Film(1, "film", "newFilm", LocalDate.now(), 90, emptySet);
+        Film film = new Film(1, "film", "newFilm", LocalDate.now(), 90);
         when(filmStorage.updateFilm(film)).thenReturn(film);
 
         Film result = filmService.update(film);
@@ -72,7 +68,7 @@ class FilmServiceTest {
 
     @Test
     void testGetFilm() {
-        Film film = new Film(1, "film", "newFilm", LocalDate.now(), 90, emptySet);
+        Film film = new Film(1, "film", "newFilm", LocalDate.now(), 90);
         when(filmStorage.getFilm(1)).thenReturn(film);
 
         Film result = filmService.getFilm(1);
@@ -82,9 +78,9 @@ class FilmServiceTest {
 
     @Test
     void testAddLike() {
-        Film film = new Film(1, "film", "newFilm", LocalDate.now(), 90, emptySet);
-        User user = new User(1, "dd@mail.ru", "dc", "user1", LocalDate.of(1990, 2, 1),
-                emptySet);
+        Film film = new Film(1, "film", "newFilm", LocalDate.now(), 90);
+        User user = new User(1, "dd@mail.ru", "dc", "user1",
+                LocalDate.of(1990, 2, 1));
         when(filmStorage.getFilm(1)).thenReturn(film);
         when(userStorage.getUser(1)).thenReturn(user);
 
@@ -95,9 +91,9 @@ class FilmServiceTest {
 
     @Test
     void testRemoveLike() {
-        Film film = new Film(1, "film", "newFilm", LocalDate.now(), 90, emptySet);
-        User user = new User(1, "dd@mail.ru", "dc", "user1", LocalDate.of(1990, 2, 1),
-                emptySet);
+        Film film = new Film(1, "film", "newFilm", LocalDate.now(), 90);
+        User user = new User(1, "dd@mail.ru", "dc", "user1",
+                LocalDate.of(1990, 2, 1));
         when(filmStorage.getFilm(1)).thenReturn(film);
         when(userStorage.getUser(1)).thenReturn(user);
 
@@ -111,9 +107,9 @@ class FilmServiceTest {
     @Test
     void testGetPopularFilms() {
         List<Film> films = new ArrayList<>();
-        films.add(new Film(1, "film1", "newFilm1", LocalDate.now(), 90, emptySet));
-        films.add(new Film(2, "film2", "newFilm2", LocalDate.now(), 90, emptySet));
-        films.add(new Film(3, "film3", "newFilm3", LocalDate.now(), 90, emptySet));
+        films.add(new Film(1, "film1", "newFilm1", LocalDate.now(), 90));
+        films.add(new Film(2, "film2", "newFilm2", LocalDate.now(), 90));
+        films.add(new Film(3, "film3", "newFilm3", LocalDate.now(), 90));
 
         films.get(0).getLikes().add(1);
         films.get(0).getLikes().add(2);
@@ -127,8 +123,8 @@ class FilmServiceTest {
         List<Film> result = filmService.getPopularFilms(2);
 
         assertEquals(2, result.size());
-        assertEquals(films.get(0), result.get(0));
-        assertEquals(films.get(1), result.get(1));
+        assertEquals(films.get(1), result.get(0));
+        assertEquals(films.get(0), result.get(1));
     }
 }
 

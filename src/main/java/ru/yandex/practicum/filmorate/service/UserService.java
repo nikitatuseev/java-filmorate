@@ -77,8 +77,6 @@ public class UserService {
     }
 
     public List<User> getCommonFriends(int id, int otherId) {
-        userStorage.getUser(id);
-        userStorage.getUser(otherId);
         User user = userStorage.getUser(id);
         User friend = userStorage.getUser(otherId);
         return user.getFriends().stream()

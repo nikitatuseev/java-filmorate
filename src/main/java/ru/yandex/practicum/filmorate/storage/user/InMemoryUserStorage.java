@@ -23,7 +23,6 @@ public class InMemoryUserStorage implements UserStorage {
                 user.setName(user.getLogin());
             }
             user.setId(idGenerator++);
-            user.setFriends(new HashSet<>());
             users.put(user.getId(), user);
             log.info("Пользователь с логином {} добавлен", user.getLogin());
         }
@@ -36,9 +35,6 @@ public class InMemoryUserStorage implements UserStorage {
         if (users.containsKey(user.getId())) {
             if (user.getName() == null || user.getName().isBlank()) {
                 user.setName(user.getLogin());
-            }
-            if (user.getFriends() == null) {
-                user.setFriends(new HashSet<>());
             }
             users.put(user.getId(), user);
             log.info("пользователь с логином {} обновлен", user.getLogin());

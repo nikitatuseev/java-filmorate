@@ -23,8 +23,6 @@ class UserServiceTest {
     @Mock
     private InMemoryUserStorage userStorage;
 
-    private final Set<Integer> emptySet = new HashSet<>();
-
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
@@ -33,10 +31,9 @@ class UserServiceTest {
     @Test
     void testGetUsers() {
         List<User> users = new ArrayList<>();
-        User user1 = new User(1, "dd@mail.ru", "dc", "user1", LocalDate.of(1990, 2, 1),
-                emptySet);
-        User user2 = new User(1, "dd@mail.ru", "d", "user2", LocalDate.of(1990, 2, 1),
-                emptySet);
+        User user1 = new User(1, "dd@mail.ru", "dc", "user1",
+                LocalDate.of(1990, 2, 1));
+        User user2 = new User(1, "dd@mail.ru", "d", "user2", LocalDate.of(1990, 2, 1));
         users.add(user1);
         users.add(user2);
 
@@ -49,8 +46,8 @@ class UserServiceTest {
 
     @Test
     void testGetUser() {
-        User user = new User(1, "dd@mail.ru", "dc", "user1", LocalDate.of(1990, 2, 1),
-                emptySet);
+        User user = new User(1, "dd@mail.ru", "dc", "user1",
+                LocalDate.of(1990, 2, 1));
 
         when(userStorage.getUser(1)).thenReturn(user);
 
@@ -61,8 +58,7 @@ class UserServiceTest {
 
     @Test
     void testCreate() {
-        User user = new User(1, "dd@mail.ru", "dc", "user1", LocalDate.of(1990, 2, 1),
-                emptySet);
+        User user = new User(1, "dd@mail.ru", "dc", "user1", LocalDate.of(1990, 2, 1));
 
         when(userStorage.create(user)).thenReturn(user);
 
@@ -73,8 +69,7 @@ class UserServiceTest {
 
     @Test
     void testUpdate() {
-        User user = new User(1, "dd@mail.ru", "dc", "user1", LocalDate.of(1990, 2, 1),
-                emptySet);
+        User user = new User(1, "dd@mail.ru", "dc", "user1", LocalDate.of(1990, 2, 1));
 
         when(userStorage.update(user)).thenReturn(user);
 
@@ -85,10 +80,8 @@ class UserServiceTest {
 
     @Test
     void testAddFriend() {
-        User user1 = new User(1, "dd@mail.ru", "dc", "user1", LocalDate.of(1990, 2, 1),
-                emptySet);
-        User user2 = new User(2, "dd@mail.ru", "d", "user2", LocalDate.of(1990, 2, 1),
-                emptySet);
+        User user1 = new User(1, "dd@mail.ru", "dc", "user1", LocalDate.of(1990, 2, 1));
+        User user2 = new User(2, "dd@mail.ru", "d", "user2", LocalDate.of(1990, 2, 1));
 
         when(userStorage.getUser(1)).thenReturn(user1);
         when(userStorage.getUser(2)).thenReturn(user2);
@@ -103,10 +96,8 @@ class UserServiceTest {
 
     @Test
     void testDeleteFriend() {
-        User user1 = new User(1, "dd@mail.ru", "dc", "user1", LocalDate.of(1990, 2, 1),
-                emptySet);
-        User user2 = new User(1, "dd@mail.ru", "d", "user2", LocalDate.of(1990, 2, 1),
-                emptySet);
+        User user1 = new User(1, "dd@mail.ru", "dc", "user1", LocalDate.of(1990, 2, 1));
+        User user2 = new User(1, "dd@mail.ru", "d", "user2", LocalDate.of(1990, 2, 1));
         user1.getFriends().add(2);
         user2.getFriends().add(1);
 
@@ -122,10 +113,8 @@ class UserServiceTest {
 
     @Test
     void testGetAllFriends() {
-        User user1 = new User(1, "dd@mail.ru", "dc", "user1", LocalDate.of(1990, 2, 1),
-                emptySet);
-        User user2 = new User(2, "dd@mail.ru", "d", "user2", LocalDate.of(1990, 2, 1),
-                emptySet);
+        User user1 = new User(1, "dd@mail.ru", "dc", "user1", LocalDate.of(1990, 2, 1));
+        User user2 = new User(2, "dd@mail.ru", "d", "user2", LocalDate.of(1990, 2, 1));
 
         when(userStorage.getUser(1)).thenReturn(user1);
         when(userStorage.getUser(2)).thenReturn(user2);
