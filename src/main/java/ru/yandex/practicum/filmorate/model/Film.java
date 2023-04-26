@@ -5,6 +5,8 @@ import lombok.Data;
 
 import javax.validation.constraints.*;
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @AllArgsConstructor
@@ -21,4 +23,13 @@ public class Film {
     private LocalDate releaseDate;
     @Positive(groups = {CreateGroup.class, UpdateGroup.class})
     private long duration;
+    private final Set<Integer> likes = new HashSet<>();
+
+    public boolean addLike(int userId) {
+        return likes.add(userId);
+    }
+
+    public boolean deleteLike(int userId) {
+        return likes.remove(userId);
+    }
 }

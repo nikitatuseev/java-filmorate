@@ -4,63 +4,60 @@ import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exception.UserException;
 import ru.yandex.practicum.filmorate.model.CreateGroup;
 import ru.yandex.practicum.filmorate.model.UpdateGroup;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.UserService;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Slf4j
 @RestController
 @RequestMapping("/users")
 public class UserController {
-    private final Map<Integer, User> users = new HashMap<>();
-    private int idGenerator = 1;
+    private final UserService userService;
+
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
 
     @PostMapping()
     public User register(@RequestBody @Validated(CreateGroup.class) User user) {
-        checkDate(user);
-        if (users.values().stream().noneMatch(u -> u.getLogin().equals(user.getLogin()))) {
-            if (user.getName() == null || user.getName().isBlank()) {
-                user.setName(user.getLogin());
-            }
-            user.setId(idGenerator++);
-            users.put(user.getId(), user);
-            log.info("Пользователь с логином {} добавлен", user.getLogin());
-        }
-        return user;
+        return userService.create(user);
     }
 
     @GetMapping()
     public List<User> getUsers() {
-        return new ArrayList<>(users.values());
+        return userService.getUsers();
+    }
+
+    @GetMapping("/{id}")
+    public User getUser(@PathVariable int id) {
+        return userService.getUser(id);
+    }
+
+    @GetMapping("/{id}/friends")
+    public List<User> getListOfFriends(@PathVariable int id) {
+        return userService.getAllFriends(userService.getUser(id));
+    }
+
+    @GetMapping("/{id}/friends/common/{otherId}")
+    public List<User> getCommonFriends(@PathVariable int id, @PathVariable int otherId) {
+        return userService.getCommonFriends(id, otherId);
     }
 
     @PutMapping
     public User updateUser(@RequestBody @Validated(UpdateGroup.class) User user) {
-        checkDate(user);
-        if (users.containsKey(user.getId())) {
-            if (user.getName() == null || user.getName().isBlank()) {
-                user.setName(user.getLogin());
-            }
-            users.put(user.getId(), user);
-            log.info("пользователь с логином {} обновлен", user.getLogin());
-            return user;
-        } else {
-            log.error("Пользователь с id = {} не найден", user.getId());
-            throw new UserException("Пользователь с таким id не существует");
-        }
+        return userService.update(user);
     }
 
-    protected void checkDate(User user) {
-        if (user.getBirthday().isAfter(LocalDate.now())) {
-            log.error("дата рождения не может быть в будущем.");
-            throw new UserException("дата рождения не может быть в будущем.");
-        }
+    @PutMapping("/{id}/friends/{friendId}")
+    public User addFriend(@PathVariable int id, @PathVariable int friendId) {
+        return userService.addFriend(id, friendId);
+    }
+
+    @DeleteMapping("/{id}/friends/{friendId}")
+    public User deleteFriend(@PathVariable int id, @PathVariable int friendId) {
+        return userService.deleteFriend(id, friendId);
     }
 }

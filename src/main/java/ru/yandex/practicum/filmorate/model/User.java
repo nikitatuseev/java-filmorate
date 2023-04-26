@@ -5,6 +5,8 @@ import lombok.Data;
 
 import javax.validation.constraints.*;
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @AllArgsConstructor
@@ -20,4 +22,13 @@ public class User {
     private String name;
     @NotNull(groups = {CreateGroup.class, UpdateGroup.class})
     private LocalDate birthday;
+    private final Set<Integer> friends = new HashSet<>();
+
+    public boolean addFriend(User user) {
+        return friends.add(user.getId());
+    }
+
+    public boolean deleteFriend(User user) {
+        return friends.remove(user.getId());
+    }
 }
