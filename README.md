@@ -1,8 +1,14 @@
 # java-filmorate
 Template repository for Filmorate project.
 
+*при выполнении тз 11 изменил диаграмму т.к нашел ошибки
 ### диаграмма базы данных
-![diagram](src/main/resources/diagram1.jpg)
+![diagram](src/main/resources/диаграмма.png)
+
+### Комментарий от проверяющего промежуточное тз:
+#### Привет, на мой взгляд все логично. Вполне рабочий вариант. Успехов в работе
+
+https://github.com/nikitatuseev/java-filmorate/pull/4
 
 ## Примеры запросов:
 
@@ -51,29 +57,3 @@ FROM genres g
 JOIN films f ON g.genre_id = f.genre_id
 
 GROUP BY g.genre_id;
-
-### 7.найти всех пользователей, которые имеют друзей и их текущий статус
-
-SELECT u.name AS user_name, fs.status
-
-FROM users u
-
-JOIN friends f ON u.user_id = f.user_id
-
-JOIN friends_status fs ON f.status_id = fs.status_id;
-
-### 8.список общих друзей двух пользователей
-
-SELECT u.name AS user_name
-
-FROM users u
-
-JOIN friends f1 ON u.user_id = f1.user_id
-
-JOIN friends f2 ON f1.friend_id = f2.friend_id
-
-WHERE f1.user_id = {user1_id} 
-
-AND f2.user_id = {user2_id}; 
-
-//user1_id и user2_id это id пользователей например 1 и 2
