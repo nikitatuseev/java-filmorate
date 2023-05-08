@@ -25,6 +25,7 @@ public class Film {
     private Mpa mpa;
     private final Set<Genre> genres = new HashSet<>();
     private final Set<Integer> likes = new HashSet<>();
+
     public void addLike(int id) {
         likes.add(id);
     }
