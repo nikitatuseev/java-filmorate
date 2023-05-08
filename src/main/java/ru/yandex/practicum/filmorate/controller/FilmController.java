@@ -18,7 +18,7 @@ public class FilmController {
 
     @Autowired
     public FilmController(@Qualifier("DbFilmService") FilmService filmService) {
-       this.filmService=filmService;
+        this.filmService = filmService;
     }
 
     @GetMapping
