@@ -38,11 +38,17 @@ public class GenreDaoImpl implements GenreDao {
     }
 
     @Override
+    public List<Genre> getAllGenres() {
+        String sql = "SELECT * FROM genre ORDER BY genre_id";
+        return jdbcTemplate.query(sql, (rs, rowNum) -> mapRowToGenre(rs));
+    }
+
+    @Override
     public List<Genre> getGenresByFilm(int id) {
-        String sql = "SELECT g.* FROM film_genre AS fg " +
-                "JOIN genre AS g ON fg.genre_id = g.genre_id " +
-                "WHERE fg.film_id =? " +
+        String sql = "SELECT g.* FROM genre AS g " +
+                "WHERE g.genre_id IN (SELECT fg.genre_id FROM film_genre AS fg WHERE fg.film_id = ?) " +
                 "ORDER BY g.genre_id";
+
         return jdbcTemplate.query(sql, (rs, rowNum) -> mapRowToGenre(rs), id);
     }
 
