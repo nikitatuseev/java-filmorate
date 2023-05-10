@@ -13,8 +13,7 @@ public class FriendsDaoImpl implements FriendsDao {
         this.jdbcTemplate = jdbcTemplate;
     }
 //я сделал новый метод чтобы он возвращал список пользователей и он работает но тесты не проходит и я
-    //не понимаю в чем ошибка
-    //и даже со старой реализацией теперь почему-то не проходит один тест
+    //не понимаю в чем ошибка и даже со старой реализацией теперь почему-то не проходит один тест
     /*@Override
     public List<User> getFriendsByUser(int id) {
         String sql = "SELECT u.* " +
