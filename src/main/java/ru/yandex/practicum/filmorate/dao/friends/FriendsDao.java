@@ -5,7 +5,7 @@ import ru.yandex.practicum.filmorate.model.User;
 import java.util.List;
 
 public interface FriendsDao {
-    List<Integer> getFriendsByUser(int id);
+    List<User> getFriendsByUser(int id);
 
     boolean addFriend(int userId, int friendId);
 
@@ -13,5 +13,5 @@ public interface FriendsDao {
 
     boolean deleteFriend(int userId, int friendId);
 
-    // List<User> getCommonFriends(int id, int otherId);
+    List<User> getCommonFriends(int id, int otherId);
 }

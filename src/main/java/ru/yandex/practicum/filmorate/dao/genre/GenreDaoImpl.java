@@ -5,11 +5,13 @@ import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.exception.FilmException;
+import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.StringJoiner;
 
 @Repository
 @Slf4j
@@ -38,16 +40,24 @@ public class GenreDaoImpl implements GenreDao {
     }
 
     @Override
-    public List<Genre> getAllGenres() {
-        String sql = "SELECT * FROM genre ORDER BY genre_id";
+    public List<Genre> getAllGenres(List<Film> films) {
+        StringJoiner joiner = new StringJoiner(",");
+        for (Film film : films) {
+            joiner.add(String.valueOf(film.getId()));
+        }
+        String sql = "SELECT DISTINCT g.* FROM genre AS g " +
+                "JOIN film_genre AS fg ON g.genre_id = fg.genre_id " +
+                "WHERE fg.film_id IN (" + joiner.toString() + ") " +
+                "ORDER BY g.genre_id";
+
         return jdbcTemplate.query(sql, (rs, rowNum) -> mapRowToGenre(rs));
     }
 
     @Override
     public List<Genre> getGenresByFilm(int id) {
         String sql = "SELECT g.* FROM genre AS g " +
-                "WHERE g.genre_id IN (SELECT fg.genre_id FROM film_genre AS fg WHERE fg.film_id = ?) " +
-                "ORDER BY g.genre_id";
+                "JOIN film_genre AS fg ON g.genre_id = fg.genre_id " +
+                "WHERE fg.film_id = ?";
 
         return jdbcTemplate.query(sql, (rs, rowNum) -> mapRowToGenre(rs), id);
     }

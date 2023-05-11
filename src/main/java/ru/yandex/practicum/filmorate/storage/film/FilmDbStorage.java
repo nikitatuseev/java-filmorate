@@ -8,7 +8,6 @@ import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.exception.FilmException;
 import ru.yandex.practicum.filmorate.exception.IncorrectParameterException;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
 
 import java.sql.ResultSet;
@@ -80,21 +79,6 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     @Override
-    public List<Genre> getAllGenres() {
-        String sql = "SELECT * FROM genre ORDER BY genre_id";
-        return jdbcTemplate.query(sql, (rs, rowNum) -> mapRowToGenre(rs));
-    }
-
-    @Override
-    public List<Genre> getGenresByFilm(int id) {
-        String sql = "SELECT g.* FROM genre AS g " +
-                "WHERE g.genre_id IN (SELECT fg.genre_id FROM film_genre AS fg WHERE fg.film_id = ?) " +
-                "ORDER BY g.genre_id";
-
-        return jdbcTemplate.query(sql, (rs, rowNum) -> mapRowToGenre(rs), id);
-    }
-
-    @Override
     public boolean addGenreToFilm(int filmId, int genreId) {
         String sql = "INSERT INTO  film_genre(film_id, genre_id) " +
                 "VALUES (?, ?)";
@@ -152,15 +136,6 @@ public class FilmDbStorage implements FilmStorage {
                 .releaseDate(rs.getDate("release_date").toLocalDate())
                 .duration(rs.getInt("duration"))
                 .mpa(mpa)
-                .build();
-    }
-
-    private Genre mapRowToGenre(ResultSet rs) throws SQLException {
-        int id = rs.getInt("genre_id");
-        String name = rs.getString("name");
-        return Genre.builder()
-                .id(id)
-                .name(name)
                 .build();
     }
 }

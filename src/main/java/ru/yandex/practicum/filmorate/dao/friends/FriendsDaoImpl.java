@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.dao.friends;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import ru.yandex.practicum.filmorate.model.User;
 
 import java.util.List;
 
@@ -9,23 +10,19 @@ import java.util.List;
 public class FriendsDaoImpl implements FriendsDao {
     private final JdbcTemplate jdbcTemplate;
 
+
     public FriendsDaoImpl(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
-//я сделал новый метод чтобы он возвращал список пользователей и он работает но тесты не проходит и я
-    //не понимаю в чем ошибка и даже со старой реализацией теперь почему-то не проходит один тест
-    /*@Override
-    public List<User> getFriendsByUser(int id) {
-        String sql = "SELECT u.* " +
-                "FROM users u " +
-                "WHERE u.user_id IN ( " +
-                "  SELECT f.friend_id " +
-                "  FROM friends f " +
-                "  WHERE (f.user_id = ? OR f.friend_id = ?) " +
-                "     AND f.status = true " +
-                ") " +
-                "AND u.user_id <> ? ";
 
+    @Override
+    public List<User> getFriendsByUser(int id) {
+        String sql = "SELECT u.*\n" +
+                "FROM users u\n" +
+                "LEFT JOIN friends f1 ON (u.user_id = f1.user_id AND f1.friend_id = ?)\n" +
+                "LEFT JOIN friends f2 ON (u.user_id = f2.friend_id AND f2.user_id = ? AND f2.status = true)\n" +
+                "WHERE f1.user_id IS NOT NULL OR f2.friend_id IS NOT NULL\n" +
+                "  AND u.user_id <> ?";
         return jdbcTemplate.query(sql, new Object[]{id, id, id}, (rs, rowNum) ->
                 User.builder()
                         .id(rs.getInt("USER_ID"))
@@ -35,14 +32,6 @@ public class FriendsDaoImpl implements FriendsDao {
                         .birthday(rs.getDate("BIRTHDAY").toLocalDate())
                         .build()
         );
-    }
-     */
-
-    @Override
-    public List<Integer> getFriendsByUser(int id) {
-        String sql = "SELECT friend_id FROM friends WHERE user_id =? AND status = true " +
-                "UNION SELECT user_id FROM friends WHERE friend_id = ?";
-        return jdbcTemplate.query(sql, (rs, rowNum) -> rs.getInt("friend_id"), id, id);
     }
 
     @Override
@@ -61,21 +50,31 @@ public class FriendsDaoImpl implements FriendsDao {
 
     @Override
     public boolean deleteFriend(int userId, int friendId) {
-        String sql = "DELETE FROM friends WHERE (user_id = ? AND friend_id = ?)";
-        return jdbcTemplate.update(sql, userId, friendId) > 0;
+        String sql = "DELETE FROM friends WHERE (user_id = ? AND friend_id = ?) OR (user_id = ? AND friend_id = ?)";
+        return jdbcTemplate.update(sql, userId, friendId, friendId, userId) > 0;
     }
-//тут тоже самое
+
+    @Override
+    public List<User> getCommonFriends(int id, int otherId) {
+        List<User> friends1 = getFriendsByUser(id);
+        List<User> friends2 = getFriendsByUser(otherId);
+
+        friends1.retainAll(friends2);
+
+        return friends1;
+    }
+
+//пытался использовать запрос с join но он всегда выводит пустой список
     /*@Override
     public List<User> getCommonFriends(int id, int otherId) {
-        String sql = "SELECT * FROM USERS u " +
-                "WHERE u.USER_ID IN (" +
-                "    SELECT f1.FRIEND_ID FROM FRIENDS f1 " +
-                "    WHERE f1.USER_ID = ? AND f1.STATUS = true" +
-                ") AND u.USER_ID IN (" +
-                "    SELECT f2.FRIEND_ID FROM FRIENDS f2 " +
-                "    WHERE f2.USER_ID = ? AND f2.STATUS = true" +
-                ")";
-        return jdbcTemplate.query(sql, new Object[]{id, otherId}, (rs, rowNum) ->
+        String sql = "SELECT u.*\n" +
+                "FROM friends f1\n" +
+                "LEFT JOIN friends f2 ON (f1.friend_id = f2.friend_id AND f2.user_id = ? AND f2.status = true)\n" +
+                "LEFT JOIN users u ON (f1.friend_id = u.user_id)\n" +
+                "WHERE f1.user_id = ?\n" +
+                "  AND f2.friend_id IS NOT NULL\n" +
+                "  AND u.user_id <> ?";
+        return jdbcTemplate.query(sql, new Object[]{otherId, id, id}, (rs, rowNum) ->
                 User.builder()
                         .id(rs.getInt("USER_ID"))
                         .email(rs.getString("EMAIL"))

@@ -8,7 +8,6 @@ import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service("DbUserService")
 @Slf4j
@@ -41,24 +40,25 @@ public class DbUserService implements UserService {
         return userStorage.updateUser(user);
     }
 
-    /*@Override
+    @Override
     public List<User> getListOfFriends(int id) {
         return friendsDao.getFriendsByUser(id);
     }
-     */
-    @Override
-    public List<User> getListOfFriends(int id) {
-        return friendsDao.getFriendsByUser(id).stream()
-                .map(this::getUser)
-                .collect(Collectors.toList());
-    }
 
     /* @Override
-     public List<User> getCommonFriends(int id, int otherId) {
-         return friendsDao.getCommonFriends(id, otherId);
+     public List<User> getListOfFriends(int id) {
+         return friendsDao.getFriendsByUser(id).stream()
+                 .map(this::getUser)
+                 .collect(Collectors.toList());
      }
+
      */
     @Override
+    public List<User> getCommonFriends(int id, int otherId) {
+        return friendsDao.getCommonFriends(id, otherId);
+    }
+
+   /* @Override
     public List<User> getCommonFriends(int id, int otherId) {
         List<Integer> friends = friendsDao.getFriendsByUser(id);
         List<Integer> otherFriends = friendsDao.getFriendsByUser(otherId);
@@ -67,6 +67,7 @@ public class DbUserService implements UserService {
                 .map(this::getUser)
                 .collect(Collectors.toList());
     }
+    */
 
     @Override
     public void addFriend(int id, int friendId) {
