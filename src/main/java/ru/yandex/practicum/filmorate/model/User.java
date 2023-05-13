@@ -1,34 +1,46 @@
 package ru.yandex.practicum.filmorate.model;
 
-import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 
 import javax.validation.constraints.*;
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 @Data
-@AllArgsConstructor
+@Builder
 public class User {
     @Null(groups = CreateGroup.class)
     @NotNull(groups = UpdateGroup.class)
-    private Integer id;
-    @Email(groups = {CreateGroup.class, UpdateGroup.class})
+    private int id;
+    @NotBlank(message = "Email не может быть пустым")
+    @Email(message = "Введен некорректный email")
     private String email;
-    @NotBlank(groups = {CreateGroup.class, UpdateGroup.class})
-    @Pattern(regexp = "^\\S+$", groups = {CreateGroup.class, UpdateGroup.class})
+    @NotBlank(message = "Логин не может быть пустым")
+    @Pattern(regexp = "\\S+", message = "Логин содержит пробелы")
     private String login;
     private String name;
-    @NotNull(groups = {CreateGroup.class, UpdateGroup.class})
+    @NotNull(message = "Дата рождения не может быть пустой")
     private LocalDate birthday;
     private final Set<Integer> friends = new HashSet<>();
 
-    public boolean addFriend(User user) {
-        return friends.add(user.getId());
+    public void addFriend(int id) {
+        friends.add(id);
     }
 
-    public boolean deleteFriend(User user) {
-        return friends.remove(user.getId());
+    public boolean deleteFriend(int id) {
+        return friends.remove(id);
+    }
+
+    public Map<String, Object> toMap() {
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("email", email);
+        parameters.put("login", login);
+        parameters.put("name", name);
+        parameters.put("birthday", birthday);
+        return parameters;
     }
 }
