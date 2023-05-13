@@ -42,6 +42,10 @@ public class Film {
         genres.add(genre);
     }
 
+    public void setGenres(List<Genre> genre) {
+        genres.addAll(genre);
+    }
+
     public boolean deleteGenre(Genre genre) {
         return genres.remove(genre);
     }

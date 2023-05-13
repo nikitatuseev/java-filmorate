@@ -10,8 +10,7 @@ import ru.yandex.practicum.filmorate.model.Genre;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.List;
-import java.util.StringJoiner;
+import java.util.*;
 
 @Repository
 @Slf4j
@@ -40,17 +39,26 @@ public class GenreDaoImpl implements GenreDao {
     }
 
     @Override
-    public List<Genre> getAllGenres(List<Film> films) {
+    public Map<Integer, List<Genre>> getAllGenres(List<Film> films) {
         StringJoiner joiner = new StringJoiner(",");
         for (Film film : films) {
             joiner.add(String.valueOf(film.getId()));
         }
-        String sql = "SELECT DISTINCT g.* FROM genre AS g " +
+        String sql = "SELECT DISTINCT g.*, fg.film_id FROM genre AS g " +
                 "JOIN film_genre AS fg ON g.genre_id = fg.genre_id " +
                 "WHERE fg.film_id IN (" + joiner.toString() + ") " +
-                "ORDER BY g.genre_id";
+                "ORDER BY fg.film_id, g.genre_id";
 
-        return jdbcTemplate.query(sql, (rs, rowNum) -> mapRowToGenre(rs));
+        Map<Integer, List<Genre>> genresByFilmId = new HashMap<>();
+        jdbcTemplate.query(sql, (rs) -> {
+            int filmId = rs.getInt("film_id");
+            Genre genre = mapRowToGenre(rs);
+            List<Genre> genres = genresByFilmId.getOrDefault(filmId, new ArrayList<>());
+            genres.add(genre);
+            genresByFilmId.put(filmId, genres);
+        });
+
+        return genresByFilmId;
     }
 
     @Override

@@ -4,13 +4,14 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 
 import java.util.List;
+import java.util.Map;
 
 public interface GenreDao {
     List<Genre> getGenres();
 
     Genre getGenre(int id);
 
-    List<Genre> getAllGenres(List<Film> films);
+    Map<Integer, List<Genre>> getAllGenres(List<Film> films);
 
     List<Genre> getGenresByFilm(int id);
 }

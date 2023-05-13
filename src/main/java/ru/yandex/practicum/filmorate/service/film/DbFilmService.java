@@ -3,36 +3,43 @@ package ru.yandex.practicum.filmorate.service.film;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.dao.FilmDao;
 import ru.yandex.practicum.filmorate.dao.genre.GenreDao;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.service.user.UserService;
+import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 
-import java.util.List;
+import java.util.*;
 
 @Service("DbFilmService")
 public class DbFilmService implements FilmService {
-    private final FilmDao filmStorage;
+    private final FilmStorage filmStorage;
     private final UserService userService;
     private final GenreDao genreDao;
 
     @Autowired
-    public DbFilmService(FilmDao filmStorage,
+    public DbFilmService(FilmStorage filmStorage,
                          @Qualifier("DbUserService") UserService userService, GenreDao genreDao) {
         this.filmStorage = filmStorage;
         this.userService = userService;
         this.genreDao = genreDao;
     }
 
+    //это все, что я смог придумать без использования запросов в цикле, потому что я не понимаю,
+    // как сделать все только в методе getAllGenres. ведь после
+    // его выполнения получается два списка: список фильмов и список их жанров,
+    // но связи между ними нет, чтобы можно было их сразу связать и добавить каждому фильму только его жанр.
     @Override
     public List<Film> getFilms() {
         List<Film> films = filmStorage.getFilms();
+        return GenresByFilmId(films);
+    }
+
+    public List<Film> GenresByFilmId(List<Film> films) {
+        Map<Integer, List<Genre>> genresByFilmId = genreDao.getAllGenres(films);
         for (Film film : films) {
-            List<Genre> filmGenre = genreDao.getGenresByFilm(film.getId());
-            for (Genre genre : filmGenre) {
-                film.addGenre(genre);
-            }
+            List<Genre> genres = genresByFilmId.getOrDefault(film.getId(), new ArrayList<>());
+            film.setGenres(genres);
         }
         return films;
     }
@@ -57,17 +64,8 @@ public class DbFilmService implements FilmService {
 
     @Override
     public List<Film> getPopularFilms(Integer count) {
-        // Получаем список популярных фильмов из filmStorage
         List<Film> popularFilms = filmStorage.getPopularFilms(count);
-
-        // Для каждого фильма добавляем соответствующие жанры
-        for (Film film : popularFilms) {
-            List<Genre> filmGenres = genreDao.getGenresByFilm(film.getId());
-            for (Genre genre : filmGenres) {
-                film.addGenre(genre);
-            }
-        }
-        return popularFilms;
+        return GenresByFilmId(popularFilms);
     }
 
     @Override

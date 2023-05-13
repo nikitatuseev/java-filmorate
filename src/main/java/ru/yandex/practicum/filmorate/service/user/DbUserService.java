@@ -45,29 +45,10 @@ public class DbUserService implements UserService {
         return friendsDao.getFriendsByUser(id);
     }
 
-    /* @Override
-     public List<User> getListOfFriends(int id) {
-         return friendsDao.getFriendsByUser(id).stream()
-                 .map(this::getUser)
-                 .collect(Collectors.toList());
-     }
-
-     */
     @Override
     public List<User> getCommonFriends(int id, int otherId) {
         return friendsDao.getCommonFriends(id, otherId);
     }
-
-   /* @Override
-    public List<User> getCommonFriends(int id, int otherId) {
-        List<Integer> friends = friendsDao.getFriendsByUser(id);
-        List<Integer> otherFriends = friendsDao.getFriendsByUser(otherId);
-        return friends.stream()
-                .filter(otherFriends::contains)
-                .map(this::getUser)
-                .collect(Collectors.toList());
-    }
-    */
 
     @Override
     public void addFriend(int id, int friendId) {
