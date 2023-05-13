@@ -32,10 +32,10 @@ public class DbFilmService implements FilmService {
     @Override
     public List<Film> getFilms() {
         List<Film> films = filmStorage.getFilms();
-        return GenresByFilmId(films);
+        return genresByFilmId(films);
     }
 
-    public List<Film> GenresByFilmId(List<Film> films) {
+    public List<Film> genresByFilmId(List<Film> films) {
         Map<Integer, List<Genre>> genresByFilmId = genreDao.getAllGenres(films);
         for (Film film : films) {
             List<Genre> genres = genresByFilmId.getOrDefault(film.getId(), new ArrayList<>());
@@ -65,7 +65,7 @@ public class DbFilmService implements FilmService {
     @Override
     public List<Film> getPopularFilms(Integer count) {
         List<Film> popularFilms = filmStorage.getPopularFilms(count);
-        return GenresByFilmId(popularFilms);
+        return genresByFilmId(popularFilms);
     }
 
     @Override
